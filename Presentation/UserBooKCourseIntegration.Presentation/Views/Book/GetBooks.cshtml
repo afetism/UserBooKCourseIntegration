@@ -1,0 +1,104 @@
+﻿@model BookViewModel 
+@{
+    ViewData["Title"] = "Books";
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css" integrity="sha256-2XFplPlrFClt0bIdPgpz8H7ojnk10H69xRqd9+uTShA=" crossorigin="anonymous" />
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-9">
+            <div class="row">
+                @foreach (var item in Model.Books)
+                {
+                    <div class="col-sm-6 col-lg-4 mb-4">
+                        <div class="candidate-list candidate-grid">
+                            <div class="candidate-list-image">
+                                <img class="img-fluid" src="/Books/@item.Img" alt="">
+                            </div>
+                            <div class="candidate-list-details">
+                                <div class="candidate-list-info">
+                                    <div class="candidate-list-title">
+                                        <h5>
+                                            <a href="javascript:void(0);" onclick="openDescriptionModal('@item.Name','@item.Description','@item.Pages','@item.Author.Name','@item.Genre.Name')">
+                                                @item.Name
+                                            </a>
+                                        </h5>
+                                    </div>
+                                    <div class="candidate-list-option">
+                                        <ul class="list-unstyled">
+                                            <li><i class="fas fa-pen pr-1"></i>@item.Author.Name</li>
+                                            <li><i class="fas fa-theater-masks pr-1"></i>@item.Genre.Name</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="text-center mt-2">
+                                    <button class="btn btn-success" onclick="addToCart('@item.Id', '@item.Name')">
+                                        <i class="fas fa-cart-plus"></i> Add to Cart
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <div class="row">
+                <div class="col-12 text-center mt-4 mt-sm-5">
+                    <ul class="pagination justify-content-center mb-0">
+                        <li class="page-item disabled"> <span class="page-link">Prev</span> </li>
+                        <li class="page-item active" aria-current="page"><span class="page-link">1 </span> <span class="sr-only">(current)</span></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item"><a class="page-link" href="#">...</a></li>
+                        <li class="page-item"><a class="page-link" href="#">25</a></li>
+                        <li class="page-item"> <a class="page-link" href="#">Next</a> </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="descriptionModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form asp-action="EditBook" asp-controller="Book" method="post">
+                <div class="modal-body">
+                    <input type="hidden" asp-for="Book.Id" id="desBookId">
+                    <div class="form-group">
+                        <label>Book Name</label>
+                        <input type="text" asp-for="Book.Name" id="desBookName" class="form-control" required disabled>
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea asp-for="Book.Description" id="desBookDesc" class="form-control" rows="5" required disabled></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Pages</label>
+                        <input type="number" asp-for="Book.Pages" id="desBookPages" class="form-control" required disabled>
+                    </div>
+                    <div class="form-group">
+                        <label>Author</label>
+                        <input type="text" asp-for="Book.Author.Name" id="desBookAuthor" class="form-control" required disabled>
+                    </div>
+                    <div class="form-group">
+                        <label>Genre</label>
+                        <input type="text" asp-for="Book.Genre.Name" id="desBookGenre" class="form-control" disabled disabled />
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openDescriptionModal(Name, Description, Pages, Author, Genre) {
+        document.getElementById('desBookName').value = Name;
+        document.getElementById('desBookDesc').value = Description;
+        document.getElementById('desBookPages').value = Pages;
+        document.getElementById('desBookAuthor').value = Author;
+        document.getElementById('desBookGenre').value = Genre;
+        $('#descriptionModal').modal('show');
+    }
+</script>

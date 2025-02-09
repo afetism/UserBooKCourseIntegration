@@ -1,0 +1,36 @@
+﻿@using UserBooKCourseIntegration.Domain.Models.Concretes
+@model CourseViewModel
+
+@{
+    ViewData["Title"] = "Courses";
+}
+
+
+<h2>YouTube Videos</h2>
+<div class="container">
+    <div class="row">
+        <div class="col-lg-9">
+<div class="row">
+    @foreach (var item in Model.Courses)
+    {
+        <div class="col-md-4">
+            <div class="card mb-3">
+                <div class="embed-responsive embed-responsive-16by9">
+                    <iframe class="embed-responsive-item"
+                            src="https://www.youtube.com/embed/@item.VideoId"
+                            allowfullscreen>
+                    </iframe>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Titile:@item.Name</h5>
+                    <p class="card-text">Price: @item.Price$</p>
+                    <p class="card-text">Duration: @item.Duration hour</p>
+                    <p class="text-muted">Channel: @item.Mentor</p>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+</div>
+</div>
+</div>
