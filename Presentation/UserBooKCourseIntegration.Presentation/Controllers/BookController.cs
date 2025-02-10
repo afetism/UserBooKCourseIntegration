@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Drawing.Printing;
 using System.Runtime.CompilerServices;
 using UserBooKCourseIntegration.Application.Repository;
 using UserBooKCourseIntegration.Domain.Models.Concretes;
@@ -18,12 +19,13 @@ public class BookController(IBookRepository bookRepository,IGenreRepository genr
     [HttpGet]
     public IActionResult GetBooks()
     {
+     
+
         var bookViewModel = new BookViewModel()
         {
-            Books = _bookRepository.GetAll()
-                       .Include(b => b.Author)
-                       .Include(b => b.Genre)
-                       .ToList(),
+            Books = _bookRepository.GetAll().ToList(),
+                     
+                       
             Genres= _genreRepository.GetAll().ToList(),
             Authors = _authorRepository.GetAll().ToList(),
             Book=new()

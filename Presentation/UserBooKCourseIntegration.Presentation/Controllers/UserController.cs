@@ -11,16 +11,24 @@ public class UserController(IUserRepository userRepository,ISpecialityRepository
     private readonly ISpecialityRepository _specialityRepository = specialityRepository;
     
     [HttpGet]
-    public IActionResult GetUsers()
+    public IActionResult GetUsers(int page=1,int pageSize=8)
     {
        
-        var getAllUser = _userRepository.GetAll().ToList();
+        var getAllUser = _userRepository.GetAll();
         var getAllSpeciality= _specialityRepository.GetAll().ToList();
+        var totalUsers=getAllUser.Count();
+        var paginatedUsers = getAllUser
+                               .Skip((page - 1) * pageSize) 
+                               .Take(pageSize) 
+                               .ToList();
+
         var newAddUserViewModel = new AddUserViewModel()
         {
-            Users=getAllUser,
+            Users=paginatedUsers,
             Specialities=getAllSpeciality,
-            User= new()
+            User= new(),
+            CurrentPage = page,
+            TotalPages = (int)Math.Ceiling((double)totalUsers / pageSize)
         };
         
         return View(newAddUserViewModel);

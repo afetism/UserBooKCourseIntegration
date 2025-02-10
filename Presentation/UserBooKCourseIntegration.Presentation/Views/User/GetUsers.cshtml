@@ -26,9 +26,16 @@
             {
                 <div class="col mb-3">
                     <div class="card">
-                        <img src="https://www.bootdey.com/image/340x120/FFB6C1/000001" alt="Cover" class="card-img-top">
+                        <img src="/Icons/blue.jpg" alt="Cover" class="card-img-top">
                         <div class="card-body text-center">
+                            @if(item.Img is null)
+                            {
+                                <img src="/Icons/defaultUser.jpg" style="width:100px;margin-top:-65px" alt="User" class="img-fluid img-thumbnail rounded-circle border-0 mb-3">
+                            }
+                            else
+                            {
                             <img src="/Icons/@item.Img" style="width:100px;margin-top:-65px" alt="User" class="img-fluid img-thumbnail rounded-circle border-0 mb-3" >
+                            }
                             <h5 class="card-title">@item.FirstName @item.LastName</h5>
                             <p class="text-secondary mb-1">
                                 @item.Speciality.Name
@@ -39,7 +46,7 @@
                         </div>
                         <div class="card-footer">
                             <a href="#editUserModal" class="edit" data-toggle="modal"
-                               onclick="populateEditModal('@item.Id','@item.FirstName', '@item.LastName','@item.SpecialityId','@item.BirthDate')">
+                               onclick="populateEditModal('@item.Img','@item.Id','@item.FirstName', '@item.LastName','@item.SpecialityId','@item.BirthDate')">
                                 <i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i>
                             </a>
                             <a href="#deleteUserModal" class="delete" data-toggle="modal" onclick="setDeleteUserId(@item.Id)">
@@ -49,6 +56,30 @@
                     </div>
                 </div>
             }
+            <div class="row">
+                <div class="col-12 text-center mt-4 mt-sm-5">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item @(Model.CurrentPage == 1 ? "disabled" : "")">
+                        <a class="page-link" asp-action="GetUsers" asp-route-page="@(Model.CurrentPage - 1)">
+                            <i class="material-icons">chevron_left</i>
+                        </a>
+                    </li>
+
+                    @for (int i = 1; i <= Model.TotalPages; i++)
+                    {
+                        <li class="page-item @(Model.CurrentPage == i ? "active" : "")">
+                            <a class="page-link" asp-action="GetUsers" asp-route-page="@i">@i</a>
+                        </li>
+                    }
+
+                    <li class="page-item @(Model.CurrentPage == Model.TotalPages ? "disabled" : "")">
+                        <a class="page-link" asp-action="GetUsers" asp-route-page="@(Model.CurrentPage + 1)">
+                            <i class="material-icons">chevron_right</i>
+                        </a>
+                    </li>
+                </ul>
+           </div>
+           </div>
         </div>
     </div>
 </div>
@@ -69,7 +100,7 @@
                     </div>
                     <div class="form-group">
                         <label>Image</label>
-                        <input type="file" asp-for="User.Img"  class="form-control" required/>
+                        <input type="file" asp-for="User.Img"  class="form-control" />
                     </div>
                     <div class="form-group">
                         <label>First Name</label>
@@ -116,6 +147,16 @@
                 </div>
                 <div class="modal-body">
                     <input type="hidden" asp-for=User.Id id="editUserId">
+                    <div class="form-group">
+                        <label>Image</label>
+                        <div>
+                            <img id="editUserImg"
+                                 src="@(string.IsNullOrEmpty(Model.User.Img) ? Url.Content("~/Icons/defaultUser.jpg") : Url.Content("/Icons/" + Model.User.Img))"
+                                 alt="User Image" class="img-thumbnail"
+                                 style="width: 150px; height: 150px; cursor: pointer;" />
+                        </div>
+                        <input type="file" asp-for="User.Img" class="form-control d-none" id="imgInput" accept="image/*" />
+                    </div>
                     <div class="form-group">
                         <label>First Name</label>
                         <input type="text" asp-for="User.FirstName" id="editFirstName" class="form-control" required>
@@ -177,7 +218,8 @@
 </div>
 
 <script>
-    function populateEditModal(userId, firstName, lastName, specialityId, birthDate) {
+    function populateEditModal(userImg,userId, firstName, lastName, specialityId, birthDate) {
+        document.getElementById('editUserImg').src = userImg ? "/Icons/" + userImg : "/Icons/defaultUser.jpg";
         document.getElementById('editUserId').value = userId;
         document.getElementById('editFirstName').value = firstName;
         document.getElementById('editLastName').value = lastName;
@@ -194,5 +236,20 @@
     function setDeleteUserId(id) {
         document.getElementById('deleteUserId').value = id;
     }
+
+    document.getElementById("editUserImg").addEventListener("click", function () {
+        document.getElementById("imgInput").click();
+    });
+
+    document.getElementById("imgInput").addEventListener("change", function (event) {
+        var file = event.target.files[0];
+        if (file) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                document.getElementById("editUserImg").src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
 
 </script>
